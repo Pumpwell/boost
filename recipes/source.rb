@@ -10,11 +10,12 @@ bash "install-boost" do
   user "root"
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-  tar xzvf #{node['boost']['file']}
-  cd #{node['boost']['build_dir']}
-  ./bootstrap.sh && ./bjam install
+    tar xzvf #{node['boost']['file']}
+    cd #{node['boost']['build_dir']}
+    ./bootstrap.sh
+    ./b2 install --prefix=/usr || :
   EOH
-  not_if "/sbin/ldconfig -v | grep boost"
+  not_if "/sbin/ldconfig -v | grep #{node['boost']['check_for_file']}"
 end
 
 execute "ldconfig" do
